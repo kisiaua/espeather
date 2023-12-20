@@ -7,6 +7,8 @@
     #include <ESP8266WiFi.h>
 #endif
 
+WiFiClient wifiClient;
+
 WiFiHandler::WiFiHandler() {}
 
 void WiFiHandler::connectToWiFi() {
@@ -18,4 +20,8 @@ void WiFiHandler::connectToWiFi() {
         Serial.println(".");
     }
     Serial.println("Connected to WiFi");
+}
+
+WiFiClient& WiFiHandler::getWiFiClient() {
+    return wifiClient;
 }
