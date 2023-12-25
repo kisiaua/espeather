@@ -1,3 +1,4 @@
 esp/src/wifi/WiFiCredentials.h
 esp/src/mqtt/mqttConfig.h
+data.db
 .idea/
