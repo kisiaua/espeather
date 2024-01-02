@@ -27,6 +27,14 @@ func prepareInsertStatement(db *sql.DB) (*sql.Stmt, error) {
 	return stmt, err
 }
 
+func prepareReadStatement(db *sql.DB) (*sql.Stmt, error) {
+	stmt, err := db.Prepare("SELECT * FROM indoor_readings ORDER BY id DESC LIMIT 10")
+	if err != nil {
+		log.Println("Error preparing statement:", err)
+	}
+	return stmt, err
+}
+
 func formatReadingValues(reading models.Reading) (string, string) {
 	temperature := fmt.Sprintf("%.2f", reading.Temperature)
 	humidity := fmt.Sprintf("%.2f", reading.Humidity)
@@ -55,4 +63,40 @@ func InsertDB(reading models.Reading) {
 	}
 
 	fmt.Println("Data inserted into database successfully.")
+}
+
+func ReadDB() []models.ReadingFull {
+
+	readings := make([]models.ReadingFull, 0)
+
+	db, err := openDatabase()
+	if err != nil {
+		return readings
+	}
+	defer db.Close()
+
+	stmt, err := prepareReadStatement(db)
+	if err != nil {
+		return readings
+	}
+	defer stmt.Close()
+
+	rows, err := stmt.Query()
+	if err != nil {
+		log.Println("Error executing query:", err)
+		return readings
+	}
+
+	for rows.Next() {
+		var reading models.ReadingFull
+		if err := rows.Scan(&reading.ID, &reading.Temperature, &reading.Humidity, &reading.Timestamp); err != nil {
+			log.Println("Error scanning row:", err)
+			return readings
+		}
+		readings = append(readings, reading)
+	}
+
+	fmt.Println(readings)
+
+	return readings
 }

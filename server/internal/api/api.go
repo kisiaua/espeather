@@ -1,6 +1,7 @@
 package api
 
 import (
+	"ESPeather/internal/db"
 	"fmt"
 	"net/http"
 
@@ -14,6 +15,10 @@ func StartServer() {
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("hello world"))
+	})
+
+	router.Get("/readings", func(w http.ResponseWriter, r *http.Request) {
+		db.ReadDB()
 	})
 
 	server := &http.Server{
