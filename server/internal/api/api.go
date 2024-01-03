@@ -2,7 +2,9 @@ package api
 
 import (
 	"ESPeather/internal/db"
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -18,7 +20,16 @@ func StartServer() {
 	})
 
 	router.Get("/readings", func(w http.ResponseWriter, r *http.Request) {
-		db.ReadDB()
+		readings := db.ReadDB()
+		jsonData, err := json.Marshal(readings)
+		if err != nil {
+			log.Println("Error encoding JSON:", err)
+			http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(jsonData)
 	})
 
 	server := &http.Server{
