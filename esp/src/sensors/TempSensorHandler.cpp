@@ -2,7 +2,7 @@
 
 #ifdef ESP32
     #include "dht22/dht22_sensor.h"
-    DHT22Sensor sensor(2);
+    DHT22Sensor sensor(4);
 #elif ESP8266
     #include "sht31/sht31_sensor.h"
     SHT31Sensor sensor;

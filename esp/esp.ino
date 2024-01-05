@@ -1,10 +1,12 @@
 #include "src/wifi/WiFiHandler.h"
 #include "src/sensors/TempSensorHandler.h"
 #include "src/mqtt/mqttHandler.h"
+#include "src/utils/RestartHandler.h"
 
 WiFiHandler wifiHandler;
 TempSensorHandler tempSensorHandler;
 mqttHandler mqttHandler;
+RestartHandler restartHandler;
 int serialSpeed = 115200;
 
 void setup() {
@@ -24,6 +26,10 @@ void loop() {
 
     float temperature = tempSensorHandler.readTemperature();
     float humidity = tempSensorHandler.readHumidity();
+    if (restartHandler.checkAndRestart(temperature, humidity)) {
+      return;
+    }
+    
     String jsonReadings = "{\"temperature\":" + String(temperature, 2) + ",\"humidity\":" + String(humidity, 2) + "}";
 
     mqttHandler.publish("indoor_readings", jsonReadings);
