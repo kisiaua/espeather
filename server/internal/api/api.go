@@ -9,11 +9,16 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
 )
 
 func StartServer() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
+
+	router.Use(cors.Handler(cors.Options {
+    	AllowedOrigins:   []string{"https://*", "http://*"},
+  	}))
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("hello world"))
