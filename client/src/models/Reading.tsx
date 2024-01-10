@@ -1,6 +1,6 @@
 export type ReadingFull = {
-  id: number;
-  temperature: number;
-  humidity: number;
-  timestamp: string;
+  ID: number;
+  Temperature: number;
+  Humidity: number;
+  Timestamp: string;
 };
