@@ -9,7 +9,7 @@ type MqttConfig struct {
 	Address string `json:"address"`
 	Port    int    `json:"port"`
 	ClientID string `json:"clientID"`
-	Topic   string `json:"topic"`
+	Topics   []string `json:"topics"`
 }
 
 func LoadConfig() (*MqttConfig, error) {

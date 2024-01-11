@@ -19,8 +19,9 @@ func openDatabase() (*sql.DB, error) {
 	return db, err
 }
 
-func prepareInsertStatement(db *sql.DB) (*sql.Stmt, error) {
-	stmt, err := db.Prepare("INSERT INTO indoor_readings (temperature, humidity) VALUES (?, ?)")
+func prepareInsertStatement(db *sql.DB, topic string) (*sql.Stmt, error) {
+	query := fmt.Sprintf("INSERT INTO %s (temperature, humidity) VALUES (?, ?)", topic)
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Println("Error preparing statement:", err)
 	}
@@ -41,14 +42,14 @@ func formatReadingValues(reading models.Reading) (string, string) {
 	return temperature, humidity
 }
 
-func InsertDB(reading models.Reading) {
+func InsertDB(topic string, reading models.Reading) {
 	db, err := openDatabase()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	stmt, err := prepareInsertStatement(db)
+	stmt, err := prepareInsertStatement(db, topic)
 	if err != nil {
 		return
 	}

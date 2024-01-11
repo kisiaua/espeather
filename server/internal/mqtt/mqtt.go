@@ -37,17 +37,20 @@ func createClientOptions(config *MqttConfig) *mqtt.ClientOptions {
 
 func Listen(config *MqttConfig) {
 	client := connect(config)
-	client.Subscribe(config.Topic, 0, handleMessage)
+	for _, topic := range config.Topics {
+        client.Subscribe(topic, 0, handleMessage)
+    }
 }
 
 func handleMessage(client mqtt.Client, msg mqtt.Message) {
 	mqttMsg := parseMqttMessage(msg)
+	topic := mqttMsg.Topic
 	reading, err := unmarshalReading(mqttMsg.Payload)
 	if err != nil {
 		fmt.Println("Error unmarshalling MQTT payload:", err)
 		return
 	}
-	db.InsertDB(reading)
+	db.InsertDB(topic, reading)
 }
 
 func parseMqttMessage(msg mqtt.Message) MqqtMessage {
