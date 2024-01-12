@@ -1,0 +1,6 @@
+CREATE TABLE "outdoor_readings" (
+    "ID" INTEGER PRIMARY KEY AUTOINCREMENT,
+    "temperature" REAL NOT NULL,
+    "humidity" REAL NOT NULL,
+    "timestamp" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
