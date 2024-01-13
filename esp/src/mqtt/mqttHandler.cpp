@@ -36,6 +36,6 @@ void mqttHandler::reconnect() {
     }
 }
 
-void mqttHandler::publish(const char* topic, String message) {
+void mqttHandler::publish(String message) {
     client.publish(topic, message.c_str());
 }

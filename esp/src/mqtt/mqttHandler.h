@@ -16,7 +16,7 @@ class mqttHandler {
         void setServer();
         bool connected();
         void reconnect();
-        void publish(const char*, String);
+        void publish(String);
 
     private:
         PubSubClient client;

@@ -32,7 +32,7 @@ void loop() {
     
     String jsonReadings = "{\"temperature\":" + String(temperature, 2) + ",\"humidity\":" + String(humidity, 2) + "}";
 
-    mqttHandler.publish("indoor_readings", jsonReadings);
+    mqttHandler.publish(jsonReadings);
 
     delay(30000);
 }
