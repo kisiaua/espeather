@@ -16,16 +16,24 @@ func StartServer() {
 	router := chi.NewRouter()
 	router.Use(middleware.Logger)
 
-	router.Use(cors.Handler(cors.Options {
-    	AllowedOrigins:   []string{"https://*", "http://*"},
-  	}))
+	router.Use(cors.Handler(cors.Options{
+		AllowedOrigins: []string{"https://*", "http://*"},
+	}))
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("hello world"))
 	})
 
-	router.Get("/readings", func(w http.ResponseWriter, r *http.Request) {
-		readings := db.ReadDB()
+	router.Get("/readings/{tableName}", func(w http.ResponseWriter, r *http.Request) {
+		params := r.URL.Query()
+
+		tableName := chi.URLParam(r, "tableName")
+		readingsCount := params.Get("count")
+		if readingsCount == "" {
+			readingsCount = "20"
+		}
+
+		readings := db.ReadDB(tableName, readingsCount)
 		jsonData, err := json.Marshal(readings)
 		if err != nil {
 			log.Println("Error encoding JSON:", err)

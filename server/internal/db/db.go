@@ -66,7 +66,7 @@ func InsertDB(topic string, reading models.Reading) {
 	fmt.Println("Data inserted into database successfully.")
 }
 
-func ReadDB() []models.ReadingFull {
+func ReadDB(tableName string, readingsCount string) []models.ReadingFull {
 
 	readings := make([]models.ReadingFull, 0)
 
