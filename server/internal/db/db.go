@@ -19,17 +19,31 @@ func openDatabase() (*sql.DB, error) {
 	return db, err
 }
 
-func prepareInsertStatement(db *sql.DB, topic string) (*sql.Stmt, error) {
-	query := fmt.Sprintf("INSERT INTO %s (temperature, humidity) VALUES (?, ?)", topic)
-	stmt, err := db.Prepare(query)
+func prepareInsertStatement(db *sql.DB) (*sql.Stmt, error) {
+	stmt, err := db.Prepare("INSERT INTO indoor_readings (temperature, humidity) VALUES (?, ?)")
 	if err != nil {
 		log.Println("Error preparing statement:", err)
 	}
 	return stmt, err
 }
 
-func prepareReadStatement(db *sql.DB) (*sql.Stmt, error) {
-	stmt, err := db.Prepare("SELECT * FROM indoor_readings ORDER BY id DESC LIMIT 10")
+func prepareReadStatement(db *sql.DB, tableName string) (*sql.Stmt, error) {
+	allowedTables := []string{"indoor_readings", "outdoor_readings"}
+
+	isAllowed := false
+	for _, allowedTable := range allowedTables {
+		if tableName == allowedTable {
+			isAllowed = true
+			break
+		}
+	}
+
+	if !isAllowed {
+		return nil, fmt.Errorf("Invalid table name: %s", tableName)
+	}
+
+	query := fmt.Sprintf("SELECT * FROM %s ORDER BY id DESC LIMIT ?", tableName)
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		log.Println("Error preparing statement:", err)
 	}
@@ -42,14 +56,14 @@ func formatReadingValues(reading models.Reading) (string, string) {
 	return temperature, humidity
 }
 
-func InsertDB(topic string, reading models.Reading) {
+func InsertDB(reading models.Reading) {
 	db, err := openDatabase()
 	if err != nil {
 		return
 	}
 	defer db.Close()
 
-	stmt, err := prepareInsertStatement(db, topic)
+	stmt, err := prepareInsertStatement(db)
 	if err != nil {
 		return
 	}
@@ -76,13 +90,13 @@ func ReadDB(tableName string, readingsCount string) []models.ReadingFull {
 	}
 	defer db.Close()
 
-	stmt, err := prepareReadStatement(db)
+	stmt, err := prepareReadStatement(db, tableName)
 	if err != nil {
 		return readings
 	}
 	defer stmt.Close()
 
-	rows, err := stmt.Query()
+	rows, err := stmt.Query(readingsCount)
 	if err != nil {
 		log.Println("Error executing query:", err)
 		return readings
