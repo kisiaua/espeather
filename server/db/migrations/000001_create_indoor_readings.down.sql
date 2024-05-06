@@ -1,1 +1,0 @@
-DROP TABLE IF EXISTS indoor_readings;
