@@ -44,13 +44,12 @@ func Listen(config *MqttConfig) {
 
 func handleMessage(client mqtt.Client, msg mqtt.Message) {
 	mqttMsg := parseMqttMessage(msg)
-	topic := mqttMsg.Topic
 	reading, err := unmarshalReading(mqttMsg.Payload)
 	if err != nil {
 		fmt.Println("Error unmarshalling MQTT payload:", err)
 		return
 	}
-	db.InsertDB(topic, reading)
+	db.InsertDB(reading)
 }
 
 func parseMqttMessage(msg mqtt.Message) MqqtMessage {
