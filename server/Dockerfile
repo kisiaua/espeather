@@ -30,7 +30,8 @@ WORKDIR /espeather
 COPY --from=migration /espeather-migration/data.db ./db/
 COPY --from=builder /espeather-build/espeather ./
 
-ENV MQTT_CONFIG="{\"address\": \"192.168.0.201\", \"port\": 1883, \"clientID\": \"laptop\", \"topics\": [\"indoor_readings\"]}"
+ARG MQTT_CONFIG
+ENV MQTT_CONFIG=$MQTT_CONFIG
 
 EXPOSE 8080
 
