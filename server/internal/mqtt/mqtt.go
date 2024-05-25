@@ -3,6 +3,7 @@ package mqtt
 import (
 	"ESPeather/internal/db"
 	"ESPeather/internal/models"
+	"ESPeather/internal/prom"
 	"encoding/json"
 	"fmt"
 
@@ -50,6 +51,7 @@ func handleMessage(client mqtt.Client, msg mqtt.Message) {
 		return
 	}
 	db.InsertDB(reading)
+	prom.RecordMetrics(reading)
 }
 
 func parseMqttMessage(msg mqtt.Message) MqqtMessage {

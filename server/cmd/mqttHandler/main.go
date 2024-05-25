@@ -3,6 +3,7 @@ package main
 import (
 	"ESPeather/internal/api"
 	"ESPeather/internal/mqtt"
+	"ESPeather/internal/prom"
 	"fmt"
 	"os"
 	"os/signal"
@@ -20,6 +21,8 @@ func main() {
 	}
 
 	go mqtt.Listen(mqttConfig)
+
+	go prom.Expose()
 
 	go api.StartServer()
 
